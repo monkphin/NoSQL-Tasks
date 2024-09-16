@@ -138,7 +138,7 @@ def edit_task(task_id):
 
 @app.route("/get_categories")
 def get_categories():
-    categories = list(mongo.db.categories.find().sort("vcategory_name", 1))
+    categories = list(mongo.db.categories.find().sort("category_name", 1))
     return render_template("categories.html", categories=categories)
     
 
@@ -160,6 +160,21 @@ def add_category():
         return redirect(url_for("get_categories"))
     
     return render_template("add_category.html")
+
+
+@app.route("/edit_category/<category_id>", methods=["GET", "POST"])
+def edit_category(category_id):
+    category = mongo.db.categories.find_one({"_id": ObjectId(category_id)})
+    
+    if request.method == "POST":
+        submit = {
+            "category_name": request.form.get("category_name")
+        }
+        mongo.db.categories.update_one({"_id": ObjectId(category_id)}, {"$set": submit})
+        flash("Category Edited")
+        return redirect(url_for("get_categories"))
+    
+    return render_template("edit_category.html", category=category)
 
     
 if __name__ == "__main__":
