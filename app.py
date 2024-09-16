@@ -142,7 +142,7 @@ def get_categories():
     return render_template("categories.html", categories=categories)
     
 
-@app.route("/delete/<task_id>")
+@app.route("/delete_task/<task_id>")
 def delete_task(task_id):
     mongo.db.tasks.delete_one({"_id": ObjectId(task_id)})
     flash("Task Successfully Deleted")
@@ -171,10 +171,17 @@ def edit_category(category_id):
             "category_name": request.form.get("category_name")
         }
         mongo.db.categories.update_one({"_id": ObjectId(category_id)}, {"$set": submit})
-        flash("Category Edited")
+        flash("Category Successfully Updated")
         return redirect(url_for("get_categories"))
     
     return render_template("edit_category.html", category=category)
+
+
+@app.route("/delete_category/<category_id>")
+def delete_category(category_id):
+    mongo.db.categories.delete_one({"_id": ObjectId(category_id)})
+    flash("Category Successfully Deleted")
+    return redirect(url_for("get_categories"))
 
     
 if __name__ == "__main__":
